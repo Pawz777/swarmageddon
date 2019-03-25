@@ -1,0 +1,16 @@
+{
+  "name": "Swarmageddon",
+  "version": "1.0.0",
+  "factorio_version": "0.17",
+  "title": "Swarmageddon - Enhanced Biter Swarms",
+  "author": "Pawz",
+  "homepage": "",
+  "dependencies": [
+    "base >= 0.17.0",
+    "stdlib >= 1.0.2",
+    "? bobenemies",
+    "? Natural_Evolution_Enemies",
+    "? Rampant"
+  ],
+  "description": "A comprehensive upgrade to Biters, making them a considerable challenge at all stages of the game. Bigger biters will split into smaller biters, nests will spawn biters when they die, and as evolution increases, so will the number of enemies you will have to face!  Compatible with all (hopefully) mods that add new enemies."
+}

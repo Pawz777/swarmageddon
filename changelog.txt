@@ -1,0 +1,7 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date:  25.03. 2019
+  Major Features:
+    - Initial release, scans and creates a list of smaller enemies to spawn on death. Should work for all mods
+
+---------------------------------------------------------------------------------------------------
