@@ -1,6 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version 1.0.2
+  Feature:
+    - Added a setting to dynamically reduce the number of spawns if you are getting overrun
+
+  Changed:
+    - Removed dependency on Stdlib
+    
 Version 1.0.1
-  - Added French translation
+  Changed:
+    - Added French translation
 
 Version: 1.0.0
 Date:  25.03. 2019

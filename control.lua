@@ -5,8 +5,7 @@ local attack = defines.command.attack
 local attack_area = defines.command.attack_area
 local compound = defines.command.compound
 local logical_or = defines.compound_command.logical_or
-
-local LOGGER = require("__stdlib__/stdlib/misc/logger").new("Swarmageddon", "swarmageddon", true)
+local max_deaths = settings.global["player-dying-mitigation"].value
 
 script.on_init(
     function()
@@ -22,14 +21,15 @@ script.on_configuration_changed(
 script.on_event(
     defines.events.on_entity_died,
     function(event)
-        queueEnemies(event.entity, event.cause)
+        queueEnemiesOnDeath(event.entity, event.cause)
     end
 )
 
 script.on_event(
     defines.events.on_tick,
     function(event)
-        spawnEnemies()
+        spawnEnemiesPerTick()
+        updatePlayerUnitsKilled(event)
     end
 )
 
@@ -40,6 +40,10 @@ function setup()
     end
     if not global.swarmDefinitions then
         global.swarmDefinitions = {}
+    end
+
+    if not global.swarmKills then
+        global.swarmKills = 0
     end
 
     local setupTable = {}
@@ -127,12 +131,35 @@ function setup()
     end
 end
 
+-- Track the number of player units getting killed
+function updatePlayerUnitsKilled(event)
+    local ticksWait = 60 -- change this to change update speed
+    local timer = event.tick % ticksWait
+    if (timer == 0) then
+        local stats = game.forces["enemy"].kill_count_statistics
+        log(serpent.block(stats.input_counts))
+        local deathsInTheLastMinute = 0
+        for k, v in pairs(stats.input_counts) do
+            if (not string.find(k, ("tree"))) then
+                local deaths =
+                    stats.get_flow_count {
+                    name = k,
+                    precision_index = defines.flow_precision_index.one_minute,
+                    input = true
+                }
+                deathsInTheLastMinute = deathsInTheLastMinute + (deaths or 0)
+            end
+        end
+        global.swarmKills = deathsInTheLastMinute or 0
+    end
+end
+
 -- Add enemies to the queue to be spawned
-function queueEnemies(enemy, cause)
-    local first_player = game.players[1]
+function queueEnemiesOnDeath(deadUnit, cause)
     local evoFactor = game.forces["enemy"].evolution_factor
-    local name = enemy.name
-    if (enemy.type == "unit-spawner") then
+    local name = deadUnit.name
+
+    if (deadUnit.type == "unit-spawner") then
         if (evoFactor < 0.3) then
             name = "medium-biter"
         end
@@ -148,15 +175,25 @@ function queueEnemies(enemy, cause)
     if (spawn) then
         for k, v in pairs(spawn) do
             numberOfSpawns = round(v / 2 + (v * evoFactor))
+            -- modify number of spawns if player is getting smashed
+            if (global.swarmKills and global.swarmKills > 0) then
+                adjustmentFactor = global.swarmKills / max_deaths
+                if (adjustmentFactor > 1) then
+                    adjustmentFactor = 1
+                end
+                --100% adjustment means no spawns
+                numberOfSpawns = numberOfSpawns - (numberOfSpawns * adjustmentFactor)
+            end
+
             if numberOfSpawns > 0 then
                 for i = 1, numberOfSpawns do
                     table.insert(
                         global.swarmQueue,
                         {
-                            surface = enemy.surface,
+                            surface = deadUnit.surface,
                             name = k,
-                            position = enemy.position,
-                            force = enemy.force,
+                            position = deadUnit.position,
+                            force = deadUnit.force,
                             cause = cause
                         }
                     )
@@ -167,9 +204,11 @@ function queueEnemies(enemy, cause)
 end
 
 -- Check the global queue of enemies to spawn this tick, and spawn them
-function spawnEnemies()
+function spawnEnemiesPerTick()
     if #(global.swarmQueue) > 0 then
         local spawnstodo = math.min(settings.global["spawns-per-tick"].value, #(global.swarmQueue))
+        local recentDeaths = global.swarmKills
+
         for i = 1, spawnstodo do
             newEnemy = table.remove(global.swarmQueue, 1)
             local subEnemyPosition =

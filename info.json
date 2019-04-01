@@ -7,7 +7,6 @@
   "homepage": "",
   "dependencies": [
     "base >= 0.17.0",
-    "stdlib >= 1.0.2",
     "? bobenemies",
     "? Natural_Evolution_Enemies",
     "? Rampant"
