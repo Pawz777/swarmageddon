@@ -137,7 +137,7 @@ function updatePlayerUnitsKilled(event)
     local timer = event.tick % ticksWait
     if (timer == 0) then
         local stats = game.forces["enemy"].kill_count_statistics
-        log(serpent.block(stats.input_counts))
+
         local deathsInTheLastMinute = 0
         for k, v in pairs(stats.input_counts) do
             if (not string.find(k, ("tree"))) then

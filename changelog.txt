@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version 1.0.3
+  Changed:
+    - Removed erroneous debug line
+    - Increased default for player spawn deaths to account for biters wiping out walls
+
 Version 1.0.2
   Feature:
     - Added a setting to dynamically reduce the number of spawns if you are getting overrun

@@ -16,7 +16,7 @@ data:extend(
 			type = "int-setting",
 			name = "player-dying-mitigation",
 			setting_type = "runtime-global",
-			default_value = 10
+			default_value = 25
 		}
 	}
 )
