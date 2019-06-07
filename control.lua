@@ -5,7 +5,7 @@ local attack = defines.command.attack
 local attack_area = defines.command.attack_area
 local compound = defines.command.compound
 local logical_or = defines.compound_command.logical_or
-local max_deaths = settings.global["player-dying-mitigation"].value
+local max_deaths = 25
 
 script.on_init(
     function()
@@ -35,6 +35,7 @@ script.on_event(
 
 -- Sets up list of units to spawn
 function setup()
+    max_deaths = settings.global["player-dying-mitigation"].value
     if not global.swarmQueue then
         global.swarmQueue = {}
     end
@@ -140,7 +141,7 @@ function updatePlayerUnitsKilled(event)
 
         local deathsInTheLastMinute = 0
         for k, v in pairs(stats.input_counts) do
-            if (not string.find(k, ("tree"))) then
+            if (not string.find(k, ("tree")) and not string.find(k, ("wall"))) then
                 local deaths =
                     stats.get_flow_count {
                     name = k,
@@ -211,13 +212,9 @@ function spawnEnemiesPerTick()
 
         for i = 1, spawnstodo do
             newEnemy = table.remove(global.swarmQueue, 1)
-            local subEnemyPosition =
-                newEnemy.surface.find_non_colliding_position(newEnemy.name, newEnemy.position, 4, 0.5)
+            local subEnemyPosition = newEnemy.surface.find_non_colliding_position(newEnemy.name, newEnemy.position, 4, 0.5)
             if subEnemyPosition then
-                local spawned =
-                    newEnemy.surface.create_entity(
-                    {name = newEnemy.name, position = subEnemyPosition, force = newEnemy.force}
-                )
+                local spawned = newEnemy.surface.create_entity({name = newEnemy.name, position = subEnemyPosition, force = newEnemy.force})
                 if spawned and newEnemy.command and spawned.valid then
                     local cause = newEnemy.cause
                     local position = newEnemy.position

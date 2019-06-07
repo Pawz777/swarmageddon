@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version 1.0.4
+  Changed:
+    - Fix for potential desync if people change settings mid-game and then have another player join. 
+    - Also removed walls as counting as 'player buildings destroyed
+
 Version 1.0.3
   Changed:
     - Removed erroneous debug line
