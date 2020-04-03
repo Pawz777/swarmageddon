@@ -1,25 +1,36 @@
 ---------------------------------------------------------------------------------------------------
+Version 1.0.5
+  Changed:
+    - Updated to Factorio v18
+
+---------------------------------------------------------------------------------------------------
 Version 1.0.4
   Changed:
     - Fix for potential desync if people change settings mid-game and then have another player join. 
     - Also removed walls as counting as 'player buildings destroyed
 
+
+---------------------------------------------------------------------------------------------------
 Version 1.0.3
   Changed:
     - Removed erroneous debug line
     - Increased default for player spawn deaths to account for biters wiping out walls
 
+---------------------------------------------------------------------------------------------------
 Version 1.0.2
   Feature:
     - Added a setting to dynamically reduce the number of spawns if you are getting overrun
 
   Changed:
     - Removed dependency on Stdlib
-    
+
+---------------------------------------------------------------------------------------------------    
 Version 1.0.1
   Changed:
     - Added French translation
 
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date:  25.03. 2019
   Major Features:
