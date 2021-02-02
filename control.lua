@@ -29,13 +29,16 @@ script.on_event(
     defines.events.on_tick,
     function(event)
         spawnEnemiesPerTick()
-        updatePlayerUnitsKilled(event)
+        local enabledMitigation = settings.startup["enable-mitigation"].value
+        if(enableMitigation) then
+            updatePlayerUnitsKilled(event)
+        end
     end
 )
 
 -- Sets up list of units to spawn
 function setup()
-    max_deaths = settings.global["player-dying-mitigation"].value
+    max_deaths = settings.startup["player-dying-mitigation"].value
     if not global.swarmQueue then
         global.swarmQueue = {}
     end
@@ -133,6 +136,7 @@ function setup()
 end
 
 -- Track the number of player units getting killed
+
 function updatePlayerUnitsKilled(event)
     local ticksWait = 60 -- change this to change update speed
     local timer = event.tick % ticksWait
@@ -207,7 +211,7 @@ end
 -- Check the global queue of enemies to spawn this tick, and spawn them
 function spawnEnemiesPerTick()
     if #(global.swarmQueue) > 0 then
-        local spawnstodo = math.min(settings.global["spawns-per-tick"].value, #(global.swarmQueue))
+        local spawnstodo = math.min(settings.startup["spawns-per-tick"].value, #(global.swarmQueue))
         local recentDeaths = global.swarmKills
 
         for i = 1, spawnstodo do
